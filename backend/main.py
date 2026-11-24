@@ -13,9 +13,19 @@ from ultralytics import YOLO
 
 app = FastAPI(title="PYNQ YOLO Object Detection API")
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5177",
+    "http://localhost:5178",
+    "https://pynq-yolo-object-detection.vercel.app",
+    FRONTEND_URL,
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Restrict to your Vercel URL after deployment
+    allow_origins=[origin for origin in ALLOWED_ORIGINS if origin],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
