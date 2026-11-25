@@ -1,15 +1,20 @@
-<<<<<<< HEAD
+# Project environments & local data
 venv/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-.streamlit/secrets.toml
-.env
-=======
-# Byte-compiled / optimized / DLL files
+.venv/
+env/
 __pycache__/
 *.py[codz]
 *$py.class
+.ipynb_checkpoints/
+.streamlit/secrets.toml
+.env
+.env.local
+dataset_backup/
+datasets/
+runs/
+uploads/
+outputs/
+package-lock.json
 
 # C extensions
 *.so
@@ -224,4 +229,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
->>>>>>> cfb3818bac7cf680fa70facc79a593b35daf4a0c

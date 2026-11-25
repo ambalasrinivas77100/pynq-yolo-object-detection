@@ -64,7 +64,7 @@ function App() {
   const [viewMode, setViewMode] = useState("annotated");
 
   const [apiStatus, setApiStatus] = useState("checking");
-  const [modelName, setModelName] = useState("yolo11n.pt");
+  const [modelName, setModelName] = useState("yolo11n.onnx");
 
   const [isDetecting, setIsDetecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -74,7 +74,7 @@ function App() {
   const checkHealth = useCallback(async (targetUrl) => {
     setApiStatus("checking");
     try {
-      const res = await axios.get(`${targetUrl}/health`, { timeout: 15000 });
+      const res = await axios.get(`${targetUrl}/health`, { timeout: 60000 });
       setApiStatus("online");
       if (res.data?.model) setModelName(res.data.model);
     } catch {
@@ -83,8 +83,21 @@ function App() {
   }, []);
 
   useEffect(() => {
-    checkHealth(apiBaseUrl);
-  }, [apiBaseUrl, checkHealth]);
+    let cancelled = false;
+    axios
+      .get(`${apiBaseUrl}/health`, { timeout: 60000 })
+      .then((res) => {
+        if (cancelled) return;
+        setApiStatus("online");
+        if (res.data?.model) setModelName(res.data.model);
+      })
+      .catch(() => {
+        if (!cancelled) setApiStatus("offline");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl]);
 
   useEffect(() => {
     return () => {
@@ -132,7 +145,6 @@ function App() {
       formData.append("file", selectedFile);
 
       const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
         timeout: 120000,
       });
 
@@ -166,6 +178,7 @@ function App() {
   function handleSaveSettings(e) {
     e.preventDefault();
     const cleaned = (draftApiUrl || DEFAULT_API_URL).replace(/\/+$/, "");
+    setApiStatus("checking");
     setApiBaseUrl(cleaned);
     setDraftApiUrl(cleaned);
     setSettingsSavedMsg(`Updated backend endpoint to ${cleaned}`);
@@ -267,10 +280,20 @@ function App() {
               {modelName}
             </span>
             <span
-              className={`badge-chip ${apiStatus === "online" ? "online" : "offline"}`}
+              className={`badge-chip ${
+                apiStatus === "online"
+                  ? "online"
+                  : apiStatus === "checking"
+                    ? "checking"
+                    : "offline"
+              }`}
             >
               <Activity size={14} />
-              {apiStatus === "online" ? "API Connected" : "API Offline"}
+              {apiStatus === "online"
+                ? "API Connected"
+                : apiStatus === "checking"
+                  ? "Connecting..."
+                  : "API Offline"}
             </span>
             <button
               type="button"
@@ -645,7 +668,7 @@ function App() {
                       {annotatedSrc && (
                         <a
                           href={annotatedSrc}
-                          download={`detected-${selectedFile?.name || "result.jpg"}`}
+                          download={`detected-${(selectedFile?.name || "result").replace(/\.[^.]+$/, "")}.jpg`}
                           className="btn-secondary"
                           style={{ padding: "6px 10px" }}
                         >

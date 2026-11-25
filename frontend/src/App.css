@@ -286,6 +286,12 @@
   color: #fb7185;
 }
 
+.badge-chip.checking {
+  border-color: rgba(245, 158, 11, 0.42);
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+
 .main-container {
   padding: 24px 28px 40px;
 }
