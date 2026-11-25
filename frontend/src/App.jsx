@@ -74,7 +74,7 @@ function App() {
   const checkHealth = useCallback(async (targetUrl) => {
     setApiStatus("checking");
     try {
-      const res = await axios.get(`${targetUrl}/health`, { timeout: 6000 });
+      const res = await axios.get(`${targetUrl}/health`, { timeout: 15000 });
       setApiStatus("online");
       if (res.data?.model) setModelName(res.data.model);
     } catch {
@@ -133,7 +133,7 @@ function App() {
 
       const res = await axios.post(`${apiBaseUrl}/detect`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60000,
+        timeout: 120000,
       });
 
       const data = res.data;
@@ -157,7 +157,7 @@ function App() {
         err.message ||
         `Unable to reach FastAPI backend at ${apiBaseUrl}`;
       setErrorMsg(detail);
-      if (!err.response) setApiStatus("offline");
+      // Keep status unchanged on /detect timeout or transient network error
     } finally {
       setIsDetecting(false);
     }
