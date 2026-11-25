@@ -219,7 +219,7 @@ function App() {
               {!collapsed && (
                 <div>
                   <div className="brand-name">VISION AI LAB</div>
-                  <div className="brand-tag">YOLOv11 · PYNQ</div>
+                  <div className="brand-tag">YOLOv11 · PYNQ · ASR</div>
                 </div>
               )}
             </div>
@@ -275,6 +275,10 @@ function App() {
           </div>
 
           <div className="topnav-badges">
+            <span className="badge-chip" title="Dashboard Author">
+              <Sparkles size={14} color="#22d3ee" />
+              ASR
+            </span>
             <span className="badge-chip">
               <Cpu size={14} color="#22d3ee" />
               {modelName}
@@ -461,9 +465,10 @@ function App() {
                 </div>
               </div>
               <p className="panel-desc" style={{ lineHeight: 1.6 }}>
-                This application pairs a React + Vite frontend with a Python FastAPI and
-                Ultralytics YOLOv11 inference backend to process uploaded images, return
-                annotated outputs, class counts, confidence scores, and bounding boxes.
+                Built by <strong>ASR</strong>. This application pairs a React + Vite
+                frontend with a Python FastAPI and YOLOv11 ONNX inference backend to
+                process uploaded images, return annotated outputs, class counts,
+                confidence scores, and bounding boxes.
               </p>
             </section>
           )}
